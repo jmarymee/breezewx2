@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BreezeWx", "BreezeWx.csproj", "{65E925BF-8C7D-437F-BFE5-0A030FF694FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Org.OpenAPITools", "..\out\csharp\src\Org.OpenAPITools\Org.OpenAPITools.csproj", "{CA625C3A-2594-48C8-B53A-CF8EBE2832A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65E925BF-8C7D-437F-BFE5-0A030FF694FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65E925BF-8C7D-437F-BFE5-0A030FF694FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65E925BF-8C7D-437F-BFE5-0A030FF694FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65E925BF-8C7D-437F-BFE5-0A030FF694FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA625C3A-2594-48C8-B53A-CF8EBE2832A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA625C3A-2594-48C8-B53A-CF8EBE2832A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA625C3A-2594-48C8-B53A-CF8EBE2832A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA625C3A-2594-48C8-B53A-CF8EBE2832A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

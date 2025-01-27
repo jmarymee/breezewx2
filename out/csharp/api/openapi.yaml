@@ -1,0 +1,1558 @@
+openapi: 3.0.0
+info:
+  description: New data API of AviationWeather.gov. This supercedes the ADDS Data
+    Server and AviationWeather Web Services.
+  termsOfService: https://aviationweather.gov/data/api/
+  title: AviationWeather.gov API
+  version: "3.12"
+servers:
+- url: /
+tags:
+- description: Decoded weather and navigational information
+  name: Data
+- description: Aviation weather information using an interface designed for maximum
+    compatibility with the previous Text Data Server
+  name: Dataserver
+paths:
+  /api/data/metar:
+    get:
+      description: Decoded aviation weather observations
+      operationId: dataMetars
+      parameters:
+      - description: Station ID(s)
+        examples:
+          "-":
+            value: ""
+          id:
+            summary: A single ICAO Id
+            value: KMCI
+          ids:
+            summary: A list of ICAO Ids separated by commas or spaces
+            value: "KMCI,KORD,KBOS"
+          states:
+            summary: A 2 letter state abbreviation preceded by a @
+            value: '@WA'
+        explode: true
+        in: query
+        name: ids
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - geojson
+          - xml
+          - html
+          type: string
+        style: form
+      - description: Include TAF
+        explode: true
+        in: query
+        name: taf
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: Hours back to search
+        explode: true
+        in: query
+        name: hours
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: bbox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          Date
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          datim:
+            summary: Date/time string
+            value: 20250127_190002Z
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: date
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: METARs
+      tags:
+      - Data
+  /api/data/taf:
+    get:
+      description: Decoded Terminal Aerodrome Forecast products
+      operationId: dataTaf
+      parameters:
+      - description: Station ID(s)
+        examples:
+          "-":
+            value: ""
+          id:
+            summary: A single ICAO Id
+            value: KMCI
+          ids:
+            summary: A list of ICAO Ids separated by commas or spaces
+            value: "KMCI,KORD,KBOS"
+          states:
+            summary: A 2 letter state abbreviation preceded by a @
+            value: '@WA'
+        explode: true
+        in: query
+        name: ids
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - geojson
+          - xml
+          - html
+          type: string
+        style: form
+      - description: Include METAR
+        explode: true
+        in: query
+        name: metar
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: bbox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Process time by valid (default) or issuance time
+        explode: true
+        in: query
+        name: time
+        required: false
+        schema:
+          enum:
+          - valid
+          - issue
+          type: string
+        style: form
+      - description: |
+          Date
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          datim:
+            summary: Date/time string
+            value: 20250127_190002Z
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: date
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: TAFs
+      tags:
+      - Data
+  /api/data/pirep:
+    get:
+      description: Pilot reports issued in PIREP or AIREP format
+      operationId: dataPIREPPHP
+      parameters:
+      - description: Station ID
+        explode: true
+        in: query
+        name: id
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          type: string
+        style: form
+      - description: Hours Back
+        explode: true
+        in: query
+        name: age
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: Distance
+        explode: true
+        in: query
+        name: distance
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: Level +-3000' to search
+        explode: true
+        in: query
+        name: level
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: Minimum intensity
+        explode: true
+        in: query
+        name: inten
+        required: false
+        schema:
+          enum:
+          - lgt
+          - mod
+          - sev
+          type: string
+        style: form
+      - description: |
+          Date
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          datim:
+            summary: Date/time string
+            value: 20250127_190002Z
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: date
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Pilot Reports
+      tags:
+      - Data
+  /api/data/airsigmet:
+    get:
+      description: Domestic SIGMETs and AIRMETs for the United States. Does not include
+        SIGMETs issued by the US in international format. Domestic AIRMETs to be discontinued
+        in January 2025.
+      operationId: dataSIGMET
+      parameters:
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - xml
+          type: string
+        style: form
+      - description: Product type
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          enum:
+          - sigmet
+          - airmet
+          type: string
+        style: form
+      - description: Hazard
+        explode: true
+        in: query
+        name: hazard
+        required: false
+        schema:
+          enum:
+          - conv
+          - turb
+          - ice
+          - ifr
+          type: string
+        style: form
+      - description: The level +-3000' to search
+        explode: true
+        in: query
+        name: level
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: |
+          Date
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          datim:
+            summary: Date/time string
+            value: 20250127_190002Z
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: date
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Domestic AIRMETs/SIGMETs
+      tags:
+      - Data
+  /api/data/isigmet:
+    get:
+      description: Decoded international SIGMETs. This does not include SIGMETs from
+        the United States in domestic format.
+      operationId: dataiSIGMET
+      parameters:
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - xml
+          type: string
+        style: form
+      - description: Hazard
+        explode: true
+        in: query
+        name: hazard
+        required: false
+        schema:
+          enum:
+          - turb
+          - ice
+          type: string
+        style: form
+      - description: Level +-3000' to search
+        explode: true
+        in: query
+        name: level
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: |
+          Date
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          datim:
+            summary: Date/time string
+            value: 20250127_190002Z
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: date
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: International SIGMETs
+      tags:
+      - Data
+  /api/data/gairmet:
+    get:
+      description: Decoded G-AIRMETs for the contiguous United States
+      operationId: dataGAIRMET
+      parameters:
+      - description: Product type
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          enum:
+          - sierra
+          - tango
+          - zulu
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - decoded
+          - json
+          - geojson
+          - xml
+          type: string
+        style: form
+      - description: Hazard
+        explode: true
+        in: query
+        name: hazard
+        required: false
+        schema:
+          enum:
+          - turb-hi
+          - turb-lo
+          - llws
+          - sfc_wind
+          - ifr
+          - mtn_obs
+          - ice
+          - fzlvl
+          type: string
+        style: form
+      - description: Date (yyyymmdd_hhmm)
+        examples:
+          "-":
+            value: ""
+          datim:
+            summary: Date/tiime string
+            value: 20250127_190002Z
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: date
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                type: string
+            text/html:
+              schema:
+                type: string
+            application/xml:
+              schema:
+                type: object
+            application/json:
+              schema:
+                type: object
+          description: successful operation
+      summary: US Graphical AIRMETs
+      tags:
+      - Data
+  /api/data/cwa:
+    get:
+      description: Center Weather Advisories issued by NWS Center Weather Service
+        Units (CWSUs)
+      operationId: dataCWA
+      parameters:
+      - description: Hazard
+        explode: true
+        in: query
+        name: hazard
+        required: false
+        schema:
+          enum:
+          - ts
+          - turb
+          - ice
+          - ifr
+          - pcpn
+          - unk
+          type: string
+        style: form
+      - description: |
+          Date
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          datim:
+            summary: Date/time string
+            value: 20250127_190002Z
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: date
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                type: string
+            text/html:
+              schema:
+                type: string
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/dataCWA_200_response'
+            application/json:
+              schema:
+                items:
+                  type: object
+                type: array
+          description: successful operation
+      summary: CWSU Center Advisories
+      tags:
+      - Data
+  /api/data/windtemp:
+    get:
+      description: Wind and temperature information from the legacy FD winds
+      operationId: dataWindTemp
+      parameters:
+      - description: |
+          Region:
+           * `all` - All sites
+           * `bos` - Northeast
+           * `mia` - Southeast
+           * `chi` - North central
+           * `dfw` - South central
+           * `slc` - Rocky Mountain
+           * `sfo` - Pacific Coast
+           * `alaska` - Alaska
+           * `hawaii` - Hawaii
+           * `other_pac` - Western Pacific
+        explode: true
+        in: query
+        name: region
+        required: false
+        schema:
+          enum:
+          - us
+          - bos
+          - mia
+          - chi
+          - dfw
+          - slc
+          - sfo
+          - alaska
+          - hawaii
+          - other_pac
+          type: string
+        style: form
+      - description: Level
+        explode: true
+        in: query
+        name: level
+        required: false
+        schema:
+          enum:
+          - low
+          - high
+          type: string
+        style: form
+      - description: Forecast cycle
+        explode: true
+        in: query
+        name: fcst
+        required: false
+        schema:
+          enum:
+          - "06"
+          - "12"
+          - "24"
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Wind/Temp Point Data
+      tags:
+      - Data
+  /api/data/areafcst:
+    get:
+      description: Text Area Forecasts for the United States outside the contiguous
+        states
+      operationId: dataAreaFcst
+      parameters:
+      - description: |
+          Date
+           * `gulf` - Gulf of Mexico
+           * `hawaii` - Hawaii
+           * `aknorth` - Northern half of Alaska
+           * `akcentral` - Interior Alaska
+           * `aksouth` - Southcentral Alaska
+           * `aksouthwest` - Alaska Penninsula
+           * `aksoutheast` - Eastern Gulf of Alaska
+           * `akpanhandle` - Alaska
+        explode: true
+        in: query
+        name: region
+        required: true
+        schema:
+          enum:
+          - gulf
+          - hawaii
+          - aknorth
+          - akcentral
+          - akaleutian
+          - aksouth
+          - aksouthwest
+          - aksoutheast
+          - akpanhandle
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: US Area Forecasts
+      tags:
+      - Data
+  /api/data/fcstdisc:
+    get:
+      description: Aviation Forecast Discussions issued by NWS Weather Forecast Offices
+      operationId: dataFcstDisc
+      parameters:
+      - description: County Warning Area (WFO)
+        examples:
+          "-":
+            value: ""
+          KEAX:
+            summary: Kansas City
+            value: keax
+        explode: true
+        in: query
+        name: cwa
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          Type of output:
+           * `afd` - aviation discussion
+           * `af` - full discussion
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          enum:
+          - afd
+          - af
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: US Forecast Discussions
+      tags:
+      - Data
+  /api/data/mis:
+    get:
+      description: Meteorological Information Statements issued by NWS Center Weather
+        Service Units (CWSU)
+      operationId: dataMIS
+      parameters:
+      - description: CWSU
+        examples:
+          "-":
+            value: ""
+          zkc:
+            summary: Kansas City
+            value: zkc
+        explode: true
+        in: query
+        name: loc
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Meteorological Information Statement
+      tags:
+      - Data
+  /api/data/stationinfo:
+    get:
+      description: Station observation location information
+      operationId: dataStationInfo
+      parameters:
+      - description: Station ID(s)
+        examples:
+          "-":
+            value: ""
+          ids:
+            summary: A set of IDs
+            value: "KORD,KJFK,KDEN"
+        explode: true
+        in: query
+        name: ids
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          box:
+            summary: A box around Chicago
+            value: "35,-90,45,-80"
+        explode: true
+        in: query
+        name: bbox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - geojson
+          - xml
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Station info
+      tags:
+      - Data
+  /api/data/airport:
+    get:
+      description: Information about airports
+      operationId: dataAirport
+      parameters:
+      - description: Station ID(s)
+        examples:
+          id:
+            summary: A single ICAO Id
+            value: KMCI
+          ids:
+            summary: A list of ICAO Ids separated by commas or spaces
+            value: "KMCI,KORD,KBOS"
+          states:
+            summary: A 2 letter state abbreviation preceded by a @
+            value: '@WA'
+        explode: true
+        in: query
+        name: ids
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: bbox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - decoded
+          - json
+          - geojson
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Airport info
+      tags:
+      - Data
+  /api/data/navaid:
+    get:
+      description: Navigational aid data
+      operationId: dataNavaid
+      parameters:
+      - description: 5 letter Fix ID(s)
+        examples:
+          "-":
+            value: ""
+          barbq:
+            summary: MCI
+            value: MCI
+        explode: true
+        in: query
+        name: ids
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: bbox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - geojson
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Navigational aid info
+      tags:
+      - Data
+  /api/data/fix:
+    get:
+      description: Naviagtional fix data
+      operationId: dataFix
+      parameters:
+      - description: 5 letter Fix ID(s)
+        examples:
+          "-":
+            value: ""
+          barbq:
+            summary: BARBQ
+            value: BARBQ
+        explode: true
+        in: query
+        name: ids
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: bbox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - geojson
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Naviagtional fix info
+      tags:
+      - Data
+  /api/data/feature:
+    get:
+      description: Additional geographic features
+      operationId: dataFeature
+      parameters:
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: bbox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - geojson
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Feature info
+      tags:
+      - Data
+  /api/data/obstacle:
+    get:
+      description: Aviation obstacle information
+      operationId: dataObstacle
+      parameters:
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: bbox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - raw
+          - json
+          - geojson
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+      summary: Obstacle info
+      tags:
+      - Data
+  /api/data/dataserver?requestType=retrieve&dataSource=metars:
+    get:
+      description: METAR reports
+      operationId: dataserverMetars
+      parameters:
+      - description: "Station ID(s) Note: must specify stationString or bounding box\
+          \ (minLat, ...)"
+        examples:
+          "-":
+            summary: Not specified
+          id:
+            summary: A single ICAO Id
+            value: KMCI
+          ids:
+            summary: A list of ICAO Ids separated by commas or spaces
+            value: "KMCI,KORD,KBOS"
+          states:
+            summary: A 2 letter state abbreviation preceded by a @
+            value: '@WA'
+        explode: true
+        in: query
+        name: stationString
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          Start time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1737997202
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T17:00:02Z
+        explode: true
+        in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          End time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1738004402
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Number of hours before now to search
+        explode: true
+        in: query
+        name: hoursBeforeNow
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: Output format
+        explode: false
+        in: query
+        name: format
+        required: false
+        schema:
+          default: xml
+          enum:
+          - xml
+          - csv
+          type: string
+        style: form
+      - description: Single most recent METAR
+        explode: false
+        in: query
+        name: mostRecent
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: Most recent METAR per station
+        explode: false
+        in: query
+        name: mostRecentForEachStation
+        required: false
+        schema:
+          enum:
+          - constraint
+          - postfilter
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: boundingBox
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: Successful operation
+      summary: Dataserver for METARs
+      tags:
+      - Dataserver
+  /api/data/dataserver?requestType=retrieve&dataSource=tafs:
+    get:
+      description: Return TAF data
+      operationId: dataserverTafs
+      parameters:
+      - description: "Station ID(s) Note: must specify stationString or bounding box\
+          \ (minLat, ...)"
+        examples:
+          "-":
+            value: ""
+          id:
+            summary: A single ICAO Id
+            value: KMCI
+          ids:
+            summary: A list of ICAO Ids separated by commas or spaces
+            value: "KMCI,KORD,KBOS"
+          states:
+            summary: A 2 letter state abbreviation preceded by a @
+            value: '@WA'
+        explode: true
+        in: query
+        name: stationString
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          Start time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1737997202
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T17:00:02Z
+        explode: true
+        in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          End time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1738004402
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Number of hours before now to search
+        explode: true
+        in: query
+        name: hoursBeforeNow
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: Output format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          default: xml
+          enum:
+          - xml
+          - csv
+          type: string
+        style: form
+      - description: Single most recent TAF
+        explode: false
+        in: query
+        name: mostRecent
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: Most recent TAF per station
+        explode: true
+        in: query
+        name: mostRecentForEachStation
+        required: false
+        schema:
+          enum:
+          - constraint
+          - postfilter
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: boundingBox
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: Successful operation
+      summary: Dataserver for TAFs
+      tags:
+      - Dataserver
+  /api/data/dataserver?requestType=retrieve&dataSource=aircraftreports:
+    get:
+      description: Return aircraft data
+      operationId: dataserverAirep
+      parameters:
+      - description: |
+          Start time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1737997202
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T17:00:02Z
+        explode: true
+        in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          End time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1738004402
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Number of hours before now to search
+        explode: true
+        in: query
+        name: hoursBeforeNow
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: Output format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          default: xml
+          enum:
+          - xml
+          - csv
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: boundingBox
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Circular bounds defined by latitude, longitude and radial distance\
+          \ in statute miles\""
+        examples:
+          "-":
+            value: ""
+          radial:
+            summary: A small area around Denver
+            value: "20;-105,39"
+        explode: true
+        in: query
+        name: radialDistance
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: Successful operation
+      summary: Dataserver for AIREPs and PIREPs
+      tags:
+      - Dataserver
+  /api/data/dataserver?requestType=retrieve&dataSource=airsigmets:
+    get:
+      description: Return AIRMETs and SIGMETs
+      operationId: dataserverSigmet
+      parameters:
+      - description: |
+          Start time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1737997202
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T17:00:02Z
+        explode: true
+        in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          End time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1738004402
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Number of hours before now to search
+        explode: true
+        in: query
+        name: hoursBeforeNow
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: Output format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          default: xml
+          enum:
+          - xml
+          - csv
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: boundingBox
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: Successful operation
+      summary: Dataserver for AIRMETs and SIGMETs
+      tags:
+      - Dataserver
+  /api/data/dataserver?requestType=retrieve&dataSource=gairmets:
+    get:
+      description: Return G-AIRMETs
+      operationId: dataserverGairmet
+      parameters:
+      - description: |
+          Start time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1737993602
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T16:00:02Z
+        explode: true
+        in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          End time
+           * `yyyymmdd_hhmm`
+           * `yyyy-mm-ddThh:mm:ssZ`
+        examples:
+          "-":
+            value: ""
+          epoch_secs:
+            summary: A Unix epoch time in seconds
+            value: 1738004402
+          iso_date:
+            summary: ISO8601 Date
+            value: 2025-01-27T19:00:02Z
+        explode: true
+        in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Number of hours before now to search
+        explode: true
+        in: query
+        name: hoursBeforeNow
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: Output format
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          default: xml
+          enum:
+          - xml
+          - csv
+          type: string
+        style: form
+      - description: "Geographic bounding box (lat0, lon0, lat1, lon1)"
+        examples:
+          "-":
+            value: ""
+          box:
+            summary: A small box around Chicago
+            value: "40,-90,45,-85"
+        explode: true
+        in: query
+        name: boundingBox
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: Successful operation
+      summary: Dataserver for G-AIRMETs
+      tags:
+      - Dataserver
+components:
+  schemas:
+    dataCWA_200_response:
+      properties:
+        data:
+          type: object
+      type: object
+      xml:
+        name: response
+
