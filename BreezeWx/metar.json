@@ -1,0 +1,44 @@
+[
+	{
+		"metar_id": 687096310,
+		"icaoId": "KSEA",
+		"receiptTime": "2025-01-30 18:04:06",
+		"obsTime": 1738260000,
+		"reportTime": "2025-01-30 18:00:00",
+		"temp": 3.3,
+		"dewp": 0.6,
+		"wdir": 150,
+		"wspd": 9,
+		"wgst": null,
+		"visib": "10+",
+		"altim": 1019.7,
+		"slp": null,
+		"qcField": 4,
+		"wxString": null,
+		"presTend": null,
+		"maxT": null,
+		"minT": null,
+		"maxT24": null,
+		"minT24": null,
+		"precip": null,
+		"pcp3hr": null,
+		"pcp6hr": null,
+		"pcp24hr": null,
+		"snow": null,
+		"vertVis": null,
+		"metarType": "SPECI",
+		"rawOb": "KSEA 301800Z 15009KT 10SM OVC014 03\/01 A3011 RMK AO2 T00330006",
+		"mostRecent": 1,
+		"lat": 47.4447,
+		"lon": -122.314,
+		"elev": 115,
+		"prior": 0,
+		"name": "Seattle-Tacoma Intl, WA, US",
+		"clouds": [
+			{
+				"cover": "OVC",
+				"base": 1400
+			}
+		]
+	}
+]
