@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Diagnostics.Metrics;
+using System.Text.Json.Serialization;
+using SuperConvert.Extensions;
+using System.Data;
 
 namespace Breezewx
 {
@@ -40,6 +43,12 @@ namespace Breezewx
 
                 string respBody = await response.Content.ReadAsStringAsync();
 
+                DataTable dt = respBody.ToDataTable("MetarTable");
+                DataTable dt2 = respBody.ToDataTable("MetarTable");
+                dt.Merge(dt2);
+
+                dt.ToCsv(".", "metar", ',');
+
 
                 MetarClass[] result = System.Text.Json.JsonSerializer.Deserialize<MetarClass[]>(respBody);
 
@@ -54,12 +63,13 @@ namespace Breezewx
 
         public static async Task Main(string[] args)
         {
-            //string url = "https://aviationweather.gov/api/data/metar?ids=KSEA&format=json";
-            //string response = await GetApiResponseAsync(url);
-            //Console.WriteLine(response);
+            while (true)
+            {
 
-            MetarClass reps2 = await GetMetar("KSEA");
-            //Console.WriteLine(reps2);
+                MetarClass reps2 = await GetMetar("KSEA");
+                Thread.Sleep(60000);
+                //Console.WriteLine(reps2);
+            }
         }
     }
 }
