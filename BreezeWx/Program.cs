@@ -1,40 +1,70 @@
-﻿using Org.OpenAPITools.Api;
-using System.Diagnostics;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Text.Json;
+using System.Diagnostics.Metrics;
 
-namespace BreezeWx;
-
-class Program
+namespace Breezewx
 {
-    static void Main(string[] args)
+    public class ApiClient
     {
-        GetAirportData();
-        Console.WriteLine("Hello, World!");
-    }
+        private static readonly HttpClient client = new HttpClient();
 
-    public static void GetAirportData()
-    {
-        try
+        public static async Task<string> GetApiResponseAsync(string url)
         {
-
-            DataApi api = new DataApi("https://aviationweather.gov/");
-            //api.DataAirport("KSEA", null, "json");
-
-            var response = api.DataMetarsWithHttpInfo("KSEA", "json");
-
-            //var metar = api.DataMetarsWithHttpInfo("KSEA", "json");
-
-            string metarString = response.RawContent;
-
-
-            MetarClass[] result = System.Text.Json.JsonSerializer.Deserialize<MetarClass[]>(metarString);
-
-
-
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                return responseBody;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine($"Request error: {e.Message}");
+                return null;
+            }
         }
-        catch (Exception e)
+
+        public static async Task<MetarClass> GetMetar(string icao)
         {
-            Debug.Print("Exception when calling AirportsApi.GetAirport: " + e.Message);
+            try
+            {
+                client.BaseAddress = new Uri("https://aviationweather.gov/api/data/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Add("User-Agent", "Breezewx");
+                HttpResponseMessage response = await client.GetAsync("metar?ids=" + icao + "&format=json");
+
+                string respBody = await response.Content.ReadAsStringAsync();
+
+
+                MetarClass[] result = System.Text.Json.JsonSerializer.Deserialize<MetarClass[]>(respBody);
+
+                return result[0];
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine($"Request error: {e.Message}");
+                return null;
+            }
+        }
+
+        public static async Task Main(string[] args)
+        {
+            //string url = "https://aviationweather.gov/api/data/metar?ids=KSEA&format=json";
+            //string response = await GetApiResponseAsync(url);
+            //Console.WriteLine(response);
+
+            MetarClass reps2 = await GetMetar("KSEA");
+            //Console.WriteLine(reps2);
         }
     }
 }
+
+
+
+
+
