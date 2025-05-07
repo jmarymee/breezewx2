@@ -8,6 +8,7 @@ using System.Diagnostics.Metrics;
 using System.Text.Json.Serialization;
 using SuperConvert.Extensions;
 using System.Data;
+using BreezeWx;
 
 namespace Breezewx
 {
@@ -63,13 +64,31 @@ namespace Breezewx
 
         public static async Task Main(string[] args)
         {
-            while (true)
-            {
 
-                MetarClass reps2 = await GetMetar("KSEA");
-                Thread.Sleep(60000);
-                //Console.WriteLine(reps2);
-            }
+
+            //MetarClass reps2 = await GetMetar("KSEA");
+
+            IngestWxAPIClass wx = new IngestWxAPIClass();
+            DataTable wxDT = wx.GetDataTabletFromCSVFile(@"C:\Users\jd\Downloads\metars.csv");
+
+            var dr = wxDT.Select("station_id = 'KSEA'");
+
+            var metars = from row in wxDT.AsEnumerable()
+                         where row.Field<string>("station_id").Equals("KSEA")
+                         select new
+                         {
+                             StationId = row.Field<string>("station_id"),
+                             RawText = row.Field<string>("raw_text"),
+                             Temp = row.Field<string>("temp_c"),
+                             Dewp = row.Field<string>("dewpoint_c"),
+                             Wdir = row.Field<string>("wind_dir_degrees"),
+                             Wspd = row.Field<string>("wind_speed_kt"),
+                             Altim = row.Field<string>("altim_in_hg"),
+                             FLight_Category = row.Field<string>("flight_category")
+                         };
+
+            Thread.Sleep(60000);
+            //Console.WriteLine(reps2);
         }
     }
 }
