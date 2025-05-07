@@ -1,6 +1,4 @@
 ﻿
-using System.Numerics;
-
 public class Rootobject
 {
     public MetarClass[] Property1 { get; set; }
@@ -13,17 +11,17 @@ public class MetarClass
     public string receiptTime { get; set; }
     public int obsTime { get; set; }
     public string reportTime { get; set; }
-    public float ? temp { get; set; }
-    public float ? dewp { get; set; }
-    public int ? wdir { get; set; }
-    public int ? wspd { get; set; }
+    public float temp { get; set; }
+    public float dewp { get; set; }
+    public int wdir { get; set; }
+    public int wspd { get; set; }
     public object wgst { get; set; }
     public string visib { get; set; }
-    public float ? altim { get; set; }
-    public float ? slp { get; set; }
-    public int ? qcField { get; set; }
+    public float altim { get; set; }
+    public object slp { get; set; }
+    public int qcField { get; set; }
     public object wxString { get; set; }
-    public float ? presTend { get; set; }
+    public object presTend { get; set; }
     public object maxT { get; set; }
     public object minT { get; set; }
     public object maxT24 { get; set; }
@@ -36,11 +34,11 @@ public class MetarClass
     public object vertVis { get; set; }
     public string metarType { get; set; }
     public string rawOb { get; set; }
-    public int ? mostRecent { get; set; }
-    public float ? lat { get; set; }
-    public float ? lon { get; set; }
-    public int ? elev { get; set; }
-    public int ? prior { get; set; }
+    public int mostRecent { get; set; }
+    public float lat { get; set; }
+    public float lon { get; set; }
+    public int elev { get; set; }
+    public int prior { get; set; }
     public string name { get; set; }
     public Cloud[] clouds { get; set; }
 }
@@ -48,5 +46,5 @@ public class MetarClass
 public class Cloud
 {
     public string cover { get; set; }
-    public int _base { get; set; }
+    public int @base { get; set; }
 }

@@ -12,80 +12,88 @@ using BreezeWx;
 
 namespace Breezewx
 {
-    public class ApiClient
+
+    public class Program
     {
-        private static readonly HttpClient client = new HttpClient();
-
-        public static async Task<string> GetApiResponseAsync(string url)
-        {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                return responseBody;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine($"Request error: {e.Message}");
-                return null;
-            }
-        }
-
-        public static async Task<MetarClass> GetMetar(string icao)
-        {
-            try
-            {
-                client.BaseAddress = new Uri("https://aviationweather.gov/api/data/");
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Add("User-Agent", "Breezewx");
-                HttpResponseMessage response = await client.GetAsync("metar?ids=" + icao + "&format=json");
-
-                string respBody = await response.Content.ReadAsStringAsync();
-
-                DataTable dt = respBody.ToDataTable("MetarTable");
-                DataTable dt2 = respBody.ToDataTable("MetarTable");
-                dt.Merge(dt2);
-
-                dt.ToCsv(".", "metar", ',');
-
-
-                MetarClass[] result = System.Text.Json.JsonSerializer.Deserialize<MetarClass[]>(respBody);
-
-                return result[0];
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine($"Request error: {e.Message}");
-                return null;
-            }
-        }
-
         public static async Task Main(string[] args)
         {
+            //This is from the API live
+            MetarClass reps2 = await ApiClient.GetMetar("KSEA");
 
 
-            //MetarClass reps2 = await GetMetar("KSEA");
-
+            //This is from a CSV file
             IngestWxAPIClass wx = new IngestWxAPIClass();
             DataTable wxDT = wx.GetDataTabletFromCSVFile(@"C:\Users\jd\Downloads\metars.csv");
 
+            //Returns one
             var dr = wxDT.Select("station_id = 'KSEA'");
 
+            //Can return city pairs and calculate distance
             var metars = from row in wxDT.AsEnumerable()
-                         where row.Field<string>("station_id").Equals("KSEA")
+                         where row.Field<string>("station_id").Equals("KSEA") || row.Field<string>("station_id").Equals("KPDX")
                          select new
                          {
                              StationId = row.Field<string>("station_id"),
+                             Latitude = row.Field<string>("latitude"),
+                             Longitude = row.Field<string>("longitude"),
                              RawText = row.Field<string>("raw_text"),
+                             ObsTime = row.Field<string>("observation_time"),
                              Temp = row.Field<string>("temp_c"),
                              Dewp = row.Field<string>("dewpoint_c"),
                              Wdir = row.Field<string>("wind_dir_degrees"),
                              Wspd = row.Field<string>("wind_speed_kt"),
+                             Gusts = row.Field<string>("wind_gust_kt"),
+                             Vis = row.Field<string>("visibility_statute_mi"),
                              Altim = row.Field<string>("altim_in_hg"),
+                             WXString = row.Field<string>("wx_string"),
+                             SkyCoverage = row.Field<string>("sky_cover"),
+                             CloudBase = row.Field<string>("cloud_base_ft_agl"),
+                             MetarType = row.Field<string>("metar_type"),
+                             VertVis = row.Field<string>("vert_vis_ft"),
                              FLight_Category = row.Field<string>("flight_category")
                          };
+
+            string time = metars.FirstOrDefault().ObsTime;
+
+            //var metars = from row in wxDT.AsEnumerable()
+            //             where row.Field<string>("station_id").Equals("KSEA") || row.Field<string>("station_id").Equals("KPDX")
+            //             select new MetarClass
+            //             {
+            //                 stationId = row.Field<string>("station_id"),
+            //                 icaoId = row.Field<string>("icao_id"),
+            //                 receiptTime = row.Field<string>("receipt_time"),
+            //                 obsTime = DateTime.Parse(row.Field<string>("observation_time")),
+            //                 reportTime = row.Field<string>("report_time"),
+            //                 temp = row.Field<float?>("temp_c"),
+            //                 dewp = row.Field<float?>("dewpoint_c"),
+            //                 wdir = row.Field<int?>("wind_dir_degrees"),
+            //                 wspd = row.Field<int?>("wind_speed_kt"),
+            //                 wgst = row.Field<object>("wind_gust_kt"),
+            //                 visib = row.Field<string>("visibility_statute_mi"),
+            //                 altim = row.Field<float?>("altim_in_hg"),
+            //                 slp = row.Field<float?>("slp_in_hg"),
+            //                 qcField = row.Field<int?>("qc_field"),
+            //                 wxString = row.Field<object>("wx_string"),
+            //                 presTend = row.Field<float?>("pressure_tendency_mb"),
+            //                 maxT = row.Field<object>("max_temp_c"),
+            //                 minT = row.Field<object>("min_temp_c"),
+            //                 maxT24 = row.Field<object>("max_temp24hr_c"),
+            //                 minT24 = row.Field<object>("min_temp24hr_c"),
+            //                 precip = row.Field<object>("precip_inch"),
+            //                 pcp3hr = row.Field<object>("pcp3hr_inch"),
+            //                 pcp6hr = row.Field<object>("pcp6hr_inch"),
+            //                 pcp24hr = row.Field<object>("pcp24hr_inch"),
+            //                 snow = row.Field<object>("snow_inch"),
+            //                 vertVis = row.Field<object>("vert_vis_ft_agl"),
+            //                 metarType = row.Field<string>("metar_type"),
+            //                 rawOb = row.Field<string>("raw_text"),
+            //                 mostRecent = row.Field<int?>("most_recent_metar_flag"),
+            //                 lat = row.Field<float?>("latitude_deg"),
+            //                 lon = row.Field<float?>("longitude_deg"),
+            //                 elev = row.Field<int?>("elevation_ft_msl")
+            //             };
+
+            //string time = metars.FirstOrDefault().obsTime;
 
             Thread.Sleep(60000);
             //Console.WriteLine(reps2);
