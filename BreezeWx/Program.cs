@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using SuperConvert.Extensions;
 using System.Data;
 using BreezeWx;
+using BreezeWx.Models;
 
 namespace Breezewx
 {
@@ -18,7 +19,14 @@ namespace Breezewx
         public static async Task Main(string[] args)
         {
             //This is from the API live
-            MetarClass reps2 = await ApiClient.GetMetar("KSEA");
+            ApiClient hClient = new ApiClient();
+
+            hClient.CanApproach();
+
+            MetarClass reps2 = await hClient.GetMetar("KSEA");
+            MetarClass reps3 = await hClient.GetMetar("KPDX");
+
+            CityPairClass cityPair = await hClient.GetCityPairInfo("KSEA", "KPDX");
 
 
             //This is from a CSV file

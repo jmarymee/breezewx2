@@ -13,6 +13,47 @@ namespace BreezeWx
         public DataTable _metarDataTable { get; set; }
 
         /// <summary>
+        /// For any lat/long this method returns the great circle distance between two points on the Earth
+        /// </summary>
+        /// <param name="lat1"></param>
+        /// <param name="lon1"></param>
+        /// <param name="lat2"></param>
+        /// <param name="lon2"></param>
+        /// <returns></returns>
+        public static float GetHaversineDistance(double lat1, double lon1, double lat2, double lon2)
+        {
+            const double R = 3437.5; //Radius of the earth in NM //6371; // Radius of the Earth in kilometers
+
+            double lat1Rad = ToRadians(lat1);
+            double lon1Rad = ToRadians(lon1);
+            double lat2Rad = ToRadians(lat2);
+            double lon2Rad = ToRadians(lon2);
+
+            double dLat = lat2Rad - lat1Rad;
+            double dLon = lon2Rad - lon1Rad;
+
+            double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                       Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
+                       Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+            //double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            double c = 2 * Math.Asin(Math.Sqrt(a));
+
+            return (float) (R * c);
+
+            //double a = Math.Pow(Math.Sin(dLat / 2), 2) + Math.Cos(lat1) * Math.Cos(lat2) * Math.Pow(Math.Sin(dLon / 2), 2);
+            //double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+            return (float)(R * c);
+
+        }
+
+        private static double ToRadians(double angle)
+        {
+            return angle * (Math.PI / 180);
+        }
+
+        /// <summary>
         /// This method reads from a CSV file and attempts to parse it into a DataTable object
         /// It uses a TextFieldParser object to read the CSV file based on a VB Class Library
         /// </summary>
