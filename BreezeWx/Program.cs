@@ -21,47 +21,24 @@ namespace Breezewx
             //This is from the API live
             ApiClient hClient = new ApiClient();
 
-            hClient.CanApproach();
+            //hClient.CanApproach();
 
-            MetarClass reps2 = await hClient.GetMetar("KSEA");
-            MetarClass reps3 = await hClient.GetMetar("KPDX");
+            //MetarClass reps2 = await hClient.GetMetar("KCRQ");
+            //MetarClass reps3 = await hClient.GetMetar("KPDX");
 
-            CityPairClass cityPair = await hClient.GetCityPairInfo("KSEA", "KPDX");
+            //CityPairClass cityPair = await hClient.GetCityPairInfo("KSEA", "KPDX");
 
 
             //This is from a CSV file
-            IngestWxAPIClass wx = new IngestWxAPIClass();
-            DataTable wxDT = wx.GetDataTabletFromCSVFile(@"C:\Users\jd\Downloads\metars.csv");
+            IngestWxAPIClass wx = new IngestWxAPIClass(@"C:\Users\jd\Downloads\metars.csv");
+            var cityPair = wx.GetCityPair("KPDX", "KPDX");
+            //DataTable wxDT = wx._metarDataTable;
 
             //Returns one
-            var dr = wxDT.Select("station_id = 'KSEA'");
+            //var dr = wxDT.Select("station_id = 'KSEA'");
 
-            //Can return city pairs and calculate distance
-            var metars = from row in wxDT.AsEnumerable()
-                         where row.Field<string>("station_id").Equals("KSEA") || row.Field<string>("station_id").Equals("KPDX")
-                         select new
-                         {
-                             StationId = row.Field<string>("station_id"),
-                             Latitude = row.Field<string>("latitude"),
-                             Longitude = row.Field<string>("longitude"),
-                             RawText = row.Field<string>("raw_text"),
-                             ObsTime = row.Field<string>("observation_time"),
-                             Temp = row.Field<string>("temp_c"),
-                             Dewp = row.Field<string>("dewpoint_c"),
-                             Wdir = row.Field<string>("wind_dir_degrees"),
-                             Wspd = row.Field<string>("wind_speed_kt"),
-                             Gusts = row.Field<string>("wind_gust_kt"),
-                             Vis = row.Field<string>("visibility_statute_mi"),
-                             Altim = row.Field<string>("altim_in_hg"),
-                             WXString = row.Field<string>("wx_string"),
-                             SkyCoverage = row.Field<string>("sky_cover"),
-                             CloudBase = row.Field<string>("cloud_base_ft_agl"),
-                             MetarType = row.Field<string>("metar_type"),
-                             VertVis = row.Field<string>("vert_vis_ft"),
-                             FLight_Category = row.Field<string>("flight_category")
-                         };
 
-            string time = metars.FirstOrDefault().ObsTime;
+            //string time = metars.FirstOrDefault().ObsTime;
 
             //var metars = from row in wxDT.AsEnumerable()
             //             where row.Field<string>("station_id").Equals("KSEA") || row.Field<string>("station_id").Equals("KPDX")

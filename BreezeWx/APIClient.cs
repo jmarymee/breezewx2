@@ -18,7 +18,7 @@ namespace BreezeWx
             client.BaseAddress = new Uri("https://aviationweather.gov/api/data/");
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("User-Agent", "Breezewx");
+            //client.DefaultRequestHeaders.Add("User-Agent", "Breezewx");
         }
 
         /// <summary>

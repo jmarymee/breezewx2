@@ -1,8 +1,10 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using BreezeWx.Models;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +13,101 @@ namespace BreezeWx
     public class IngestWxAPIClass
     {
         public DataTable _metarDataTable { get; set; }
+
+        //How we init the METAR Table
+        public IngestWxAPIClass(string filePathToCSV)
+        {
+            _metarDataTable = GetDataTabletFromCSVFile(filePathToCSV);
+        }
+
+        public CityPairClass GetCityPair(string depart, string destination)
+        {
+            var city1 = GetMetarForCity(depart);
+
+            var cityPair = new CityPairClass();
+            return cityPair;
+        }
+
+        public MetarClass GetMetarForCity(string cityName)
+        {
+            MetarClass city = new MetarClass();
+
+            //Can return city pairs and calculate distance
+            var metars = from row in _metarDataTable.AsEnumerable()
+                         where row.Field<string>("station_id").Equals(cityName) //|| row.Field<string>("station_id").Equals("KPDX")
+                         select new
+                         {
+                             StationId = row.Field<string>("station_id"),
+                             Latitude = row.Field<string>("latitude"),
+                             Longitude = row.Field<string>("longitude"),
+                             RawText = row.Field<string>("raw_text"),
+                             ObsTime = row.Field<string>("observation_time"),
+                             Temp = row.Field<string>("temp_c"),
+                             Dewp = row.Field<string>("dewpoint_c"),
+                             Wdir = row.Field<string>("wind_dir_degrees"),
+                             Wspd = row.Field<string>("wind_speed_kt"),
+                             Gusts = row.Field<string>("wind_gust_kt"),
+                             Vis = row.Field<string>("visibility_statute_mi"),
+                             Altim = row.Field<string>("altim_in_hg"),
+                             WXString = row.Field<string>("wx_string"),
+                             SkyCoverage = row.Field<string>("sky_cover"),
+                             CloudBase = row.Field<string>("cloud_base_ft_agl"),
+                             SkyCoverage1 = row.Field<string>("sky_cover1"),
+                             CloudBase1 = row.Field<string>("cloud_base_ft_agl1"),
+                             SkyCoverage2 = row.Field<string>("sky_cover2"),
+                             CloudBase2 = row.Field<string>("cloud_base_ft_agl2"),
+                             SkyCoverage3 = row.Field<string>("sky_cover3"),
+                             CloudBase3 = row.Field<string>("cloud_base_ft_agl3"),
+                             MetarType = row.Field<string>("metar_type"),
+                             VertVis = row.Field<string>("vert_vis_ft"),
+                             FLight_Category = row.Field<string>("flight_category")
+                         };
+
+            var cy = metars.FirstOrDefault();
+
+            city.icaoId = cy.StationId;
+            city.wdir = cy.Wdir;
+            city.wspd = cy.Wspd;
+            city.wgst = cy.Gusts;
+            city.visib = cy.Vis;
+
+            var clouds = new List<Cloud>();
+
+            //Sky Coverage - first layer. If CLR then it's easy and we are done
+            if (cy.SkyCoverage.Equals("CLR"))
+            {
+                //clouds.Add(new Cloud() { cover = cy.SkyCoverage, @base = int.Parse(cy.CloudBase) });
+                clouds.Add(new Cloud() { cover = cy.SkyCoverage, @base = null });
+            }
+            else
+            {
+                clouds.Add(new Cloud() { cover = cy.SkyCoverage, @base = int.Parse(cy.CloudBase) });
+            }
+
+            //Sky coverage 2
+            if (!String.IsNullOrEmpty(cy.SkyCoverage1))
+            {
+                clouds.Add(new Cloud() { cover = cy.SkyCoverage1, @base = int.Parse(cy.CloudBase1) });
+            }
+
+            //Sky Coverage 3
+            if (!String.IsNullOrEmpty(cy.SkyCoverage2))
+            {
+                clouds.Add(new Cloud() { cover = cy.SkyCoverage2, @base = int.Parse(cy.CloudBase2) });
+            }
+
+            //Sky Coverage 3
+            if (!String.IsNullOrEmpty(cy.SkyCoverage3))
+            {
+                clouds.Add(new Cloud() { cover = cy.SkyCoverage3, @base = int.Parse(cy.CloudBase3) });
+            }
+
+            //Now add to the layers list
+            city.clouds = clouds.ToArray();
+
+
+            return city;
+        }
 
         /// <summary>
         /// For any lat/long this method returns the great circle distance between two points on the Earth

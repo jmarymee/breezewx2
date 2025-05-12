@@ -13,8 +13,8 @@ public class MetarClass
     public string reportTime { get; set; }
     public float temp { get; set; }
     public float dewp { get; set; }
-    public int wdir { get; set; }
-    public int wspd { get; set; }
+    public object wdir { get; set; }
+    public object wspd { get; set; }
     public object wgst { get; set; }
     public string visib { get; set; }
     public float altim { get; set; }
@@ -46,5 +46,5 @@ public class MetarClass
 public class Cloud
 {
     public string cover { get; set; }
-    public int @base { get; set; }
+    public int? @base { get; set; }
 }
