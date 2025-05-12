@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace BreezeWx
 {
@@ -26,8 +27,7 @@ namespace BreezeWx
         /// </summary>
         /// <returns></returns>
         public bool CanApproach()
-        {
-
+        { 
             Models.ApproachTypesFlags airplane = Models.ApproachTypesFlags.CATI | ApproachTypesFlags.RNP;
             Models.ApproachTypesFlags ksea = Models.ApproachTypesFlags.CATIII | Models.ApproachTypesFlags.CATII | Models.ApproachTypesFlags.LPV;
 
@@ -68,8 +68,49 @@ namespace BreezeWx
             return cityPair;
         }
 
+        public async Task<String> GetMetarXML(string icao)
+        {
+            HttpResponseMessage response = await client.GetAsync("metar?ids=" + icao + "&format=xml");
+
+            string respBody = await response.Content.ReadAsStringAsync();
+
+            var myXM = ParseXmlToClass<response> (respBody);
+
+            var retXML = ParseXmlFileToArray<Models.responseDataMETAR>(@"C:\Users\jd\Downloads\metars.xml");
+
+            return respBody;
+        }
+
+        public static T ParseXmlToClass<T>(string xmlString) where T : class
+        {
+            if (string.IsNullOrWhiteSpace(xmlString))
+                throw new ArgumentException("XML string cannot be null or empty.", nameof(xmlString));
+
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            using (StringReader reader = new StringReader(xmlString))
+            {
+                return serializer.Deserialize(reader) as T;
+            }
+        }
+
+        public static T[] ParseXmlFileToArray<T>(string filePath) where T : class
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("The specified XML file was not found.", filePath);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(T[]));
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
+            {
+                return (T[])serializer.Deserialize(fileStream);
+            }
+        }
+
         public async Task<MetarClass> GetMetar(string icao)
         {
+
             try
             {
                 //client.BaseAddress = new Uri("https://aviationweather.gov/api/data/");

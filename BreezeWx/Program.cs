@@ -21,10 +21,12 @@ namespace Breezewx
             //This is from the API live
             ApiClient hClient = new ApiClient();
 
+            string mxml = await hClient.GetMetarXML("KPDX");
+
             //hClient.CanApproach();
 
             //MetarClass reps2 = await hClient.GetMetar("KCRQ");
-            //MetarClass reps3 = await hClient.GetMetar("KPDX");
+            MetarClass reps3 = await hClient.GetMetar("KPDX");
 
             //CityPairClass cityPair = await hClient.GetCityPairInfo("KSEA", "KPDX");
 
