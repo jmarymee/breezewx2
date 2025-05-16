@@ -76,7 +76,8 @@ namespace BreezeWx
 
             var myXM = ParseXmlToClass<response> (respBody);
 
-            var retXML = ParseXmlFileToArray<Models.responseDataMETAR>(@"C:\Users\jd\Downloads\metars.xml");
+            //var retXML = ParseXmlFileToArray<responseData>(@"C:\Users\jd\Downloads\metars.xml");
+            var retXML = ParseXmlFileToArray<response>(@"C:\Users\jd\Downloads\metars.xml", typeof(response));
 
             return respBody;
         }
@@ -105,6 +106,21 @@ namespace BreezeWx
             using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
             {
                 return (T[])serializer.Deserialize(fileStream);
+            }
+        }
+
+        //This parses an XML file as a response type into an array of METARS
+        
+        public static T ParseXmlFileToArray<T>(string filePath, Type type) where T : class
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("The specified XML file was not found.", filePath);
+            XmlSerializer serializer = new XmlSerializer(type);
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
+            {
+                return (T)serializer.Deserialize(fileStream);
             }
         }
 
